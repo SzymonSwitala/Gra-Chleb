@@ -12,6 +12,6 @@ public class Table : MonoBehaviour
     {
       GameObject go=  Instantiate(breadObj,new Vector3(xPos,transform.position.y,transform.position.z),Quaternion.identity);
         go.GetComponent<SpriteRenderer>().sprite = sprite;
-        xPos++;
+        xPos+=0.75f;
     }
 }
