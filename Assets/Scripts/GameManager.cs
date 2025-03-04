@@ -17,12 +17,16 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private Table table;
     [SerializeField] private TextMeshProUGUI shoppingListText;
-    [SerializeField] private GameObject sheetGO;
     [SerializeField] private Slider timeSlider;
     [SerializeField] private int listShowTime;
     [SerializeField] private Bread[] breadList;
-    [SerializeField] private GameObject finishShoppingButton;
-
+    [SerializeField] private GameObject shoppingListPanel;
+    [SerializeField] private GameObject summaryPanel;
+    [SerializeField] private GameObject mainPanel;
+    [SerializeField] private TextMeshProUGUI summaryPanelText;
+    [SerializeField] private TextMeshProUGUI summaryShoppingList;
+    [SerializeField] private TextMeshProUGUI summaryPurchaseList;
+    // [SerializeField] private TextMeshProUGUI reciptText;
     [SerializeField] private int maxAmountOfBreadToBuy = 10;
     private int purchasedBreadCounter = 0;
 
@@ -32,6 +36,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
 
+        summaryPanel.SetActive(false);
+        mainPanel.SetActive(false);
         shoppingList = GenerateShoppingList();
         shoppingListText.text = GenerateShoppingListText(breadList, shoppingList, maxAmountOfBreadToBuy);
         StartCoroutine(ShowListAndCountdown());
@@ -70,7 +76,7 @@ public class GameManager : MonoBehaviour
     {
         float counter = listShowTime;
         timeSlider.maxValue = counter;
-        sheetGO.SetActive(true);
+        shoppingListPanel.SetActive(true);
 
         while (counter > 0)
         {
@@ -78,8 +84,8 @@ public class GameManager : MonoBehaviour
             timeSlider.value = counter;
             yield return null;
         }
-        sheetGO.SetActive(false);
-
+        shoppingListPanel.SetActive(false);
+        mainPanel.SetActive(true);
     }
 
     public void AddPurchasedBread(int index)
@@ -92,7 +98,8 @@ public class GameManager : MonoBehaviour
         purchasedBreadCounter++;
         purchasedBreads[index]++;
         table.SpawnBread(breadList[index].breadSprite);
-      //  Debug.Log("dodano "+ breadList[index].breadName);
+       // reciptText.text = GenerateShoppingListText(breadList, purchasedBreads, maxAmountOfBreadToBuy);
+        //  Debug.Log("dodano "+ breadList[index].breadName);
 
     }
     public void FinishShopping()
@@ -104,7 +111,13 @@ public class GameManager : MonoBehaviour
         {
             score += Mathf.Min(shoppingList[i], purchasedBreads[i]);
         }
-        Debug.Log("Zdobyłeś "+ score + " na "+ maxScore);
+       
+        summaryPanel.SetActive(true);
+     
+       float percent= (float)score / (float)maxScore * 100;
+        summaryPanelText.text = percent + "%";
 
+        summaryShoppingList.text = GenerateShoppingListText(breadList, shoppingList, maxAmountOfBreadToBuy);
+        summaryPurchaseList.text = GenerateShoppingListText(breadList, purchasedBreads, maxAmountOfBreadToBuy);
     }
 }
