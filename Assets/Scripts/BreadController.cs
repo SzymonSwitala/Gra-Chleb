@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-
-public class EventController : MonoBehaviour
+public class BreadController : MonoBehaviour 
 {
-   [SerializeField] UnityEvent onMouseClick;
+    [SerializeField] int breadID;
+    [SerializeField] GameManager gameManager;
     private void OnMouseDown()
     {
-        onMouseClick.Invoke();
+        gameManager.AddPurchasedBread(breadID,transform);
     }
 
     private void OnMouseEnter()

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 public class Table : MonoBehaviour
@@ -8,9 +9,11 @@ public class Table : MonoBehaviour
     {
         xPos = transform.position.x;
     }
-    public void SpawnBread(Sprite sprite)
+    public void SpawnBread(Sprite sprite,Transform breadTransform)
     {
-      GameObject go=  Instantiate(breadObj,new Vector3(xPos,transform.position.y,transform.position.z),Quaternion.identity);
+     
+        GameObject go = Instantiate(breadObj, breadTransform.position, Quaternion.identity);
+        go.transform.DOMove(new Vector3(xPos, transform.position.y, transform.position.z),1);
         go.GetComponent<SpriteRenderer>().sprite = sprite;
         xPos+=0.75f;
     }

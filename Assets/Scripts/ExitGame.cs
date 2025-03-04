@@ -6,7 +6,13 @@ public class ExitGame : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Escape))
         {
-            Application.Quit();
+            Exit();
+
         }
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
     }
 }

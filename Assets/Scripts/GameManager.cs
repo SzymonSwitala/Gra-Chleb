@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,8 +14,8 @@ public class GameManager : MonoBehaviour
 {
     private int amountOfBreadToBuy; // liczba chlebków które zostaną wylosowane do zakupu
     [SerializeField] private int listShowTime; // czas pokazywania listy zakupów
-    [SerializeField] private int startingMoney=20;
-    [SerializeField] private int money=0; // liczba kasy na chelbki. 1 chlebek kosztuje 1 kasy
+    [SerializeField] private int startingMoney = 20;
+    [SerializeField] private int money = 0; // liczba kasy na chelbki. 1 chlebek kosztuje 1 kasy
 
     [SerializeField] private Bread[] breadList;
 
@@ -29,13 +30,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI summaryShoppingList;
     [SerializeField] private TextMeshProUGUI summaryPurchaseList;
     [SerializeField] private TextMeshProUGUI moneyText;
-   
+
     public int[] shoppingList; // tablica z iloscia chlebków w liscie zakupów
     public int[] purchasedBreads; // tablica z iloscią chlebków zakupionych przez gracza
 
     private void Start()
     {
-        money=startingMoney;
+        money = startingMoney;
         amountOfBreadToBuy = Random.Range(4, 8); // randomowe losowanie ilosci chlebkow w liscie zakupow
         summaryPanel.SetActive(false);
         mainPanel.SetActive(false);
@@ -78,6 +79,9 @@ public class GameManager : MonoBehaviour
         float counter = listShowTime;
         timeSlider.maxValue = counter;
         shoppingListPanel.SetActive(true);
+        Transform sheet = shoppingListPanel.transform.GetChild(0);
+        sheet.transform.localScale = Vector3.zero;
+        sheet.DOScale(new Vector3(0.71004f, 0.71004f, 0.71004f), 1.5f);
 
         while (counter > 0)
         {
@@ -85,10 +89,18 @@ public class GameManager : MonoBehaviour
             timeSlider.value = counter;
             yield return null;
         }
+        sheet.DOScale(new Vector3(0, 0, 0), 1.5f).OnComplete(() => SwitchUI());
+
+
+
+
+    }
+    private void SwitchUI()
+    {
         shoppingListPanel.SetActive(false);
         mainPanel.SetActive(true);
     }
-    public void AddPurchasedBread(int index)
+    public void AddPurchasedBread(int index,Transform breadTransform)
     {
         if (money <= 0)
         {
@@ -98,7 +110,7 @@ public class GameManager : MonoBehaviour
         money--;
         moneyText.text = "Kasa: " + money + " zł";
         purchasedBreads[index]++;
-        table.SpawnBread(breadList[index].breadSprite);
+        table.SpawnBread(breadList[index].breadSprite, breadTransform);
 
     }
     public void FinishShopping()
@@ -115,14 +127,14 @@ public class GameManager : MonoBehaviour
         int spendedMoney = startingMoney - money;
         float percent = (float)score / (float)maxScore * 100;
         //  summaryPanelText.text = (int)percent + "%";
-        if (percent==100)
+        if (percent == 100)
         {
             summaryPanelText.text = "Kupiłeś wszystkie potrzebne chlebki";
 
             if (spendedMoney > amountOfBreadToBuy)
             {
 
-             
+
                 summaryPanelText.text += " ,ale wydałeś na to o " + (spendedMoney - amountOfBreadToBuy) + " zł za dużo.";
             }
             else
@@ -136,15 +148,15 @@ public class GameManager : MonoBehaviour
             if (spendedMoney > amountOfBreadToBuy)
             {
 
-              
+
                 summaryPanelText.text += " i jeszcze wydałeś na to o " + (spendedMoney - amountOfBreadToBuy) + " zł za dużo";
             }
             summaryPanelText.text += ". Żona będzie wciekła";
         }
 
-       
-    
-        
+
+
+
         summaryShoppingList.text = GenerateShoppingListText(breadList, shoppingList, amountOfBreadToBuy);
         summaryPurchaseList.text = GenerateShoppingListText(breadList, purchasedBreads, amountOfBreadToBuy);
     }
